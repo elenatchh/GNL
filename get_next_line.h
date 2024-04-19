@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elefonta <elefonta@student.42.fr>          +#+  +:+       +#+        */
+/*   By: melondeau <melondeau@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 14:10:03 by elefonta          #+#    #+#             */
-/*   Updated: 2024/04/16 13:23:57 by elefonta         ###   ########.fr       */
+/*   Updated: 2024/04/19 15:15:20 by melondeau        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # endif 
 
 char	*get_next_line(int fd);
-char	*ft_strchr(const char *s, int c);
+char	*ft_realloc(char str, size_t n);
 ssize_t	ft_read_and_stock(char *stock, int fd);
 char	*ft_extract_line(char *stock);
 void	ft_shift_stock(char *stock, int n);
