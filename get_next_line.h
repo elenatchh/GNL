@@ -6,7 +6,7 @@
 /*   By: melondeau <melondeau@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 14:10:03 by elefonta          #+#    #+#             */
-/*   Updated: 2024/04/19 15:29:45 by melondeau        ###   ########.fr       */
+/*   Updated: 2024/04/19 18:39:53 by melondeau        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,14 @@
 # endif 
 
 char	*get_next_line(int fd);
-char	*ft_realloc(char *str, size_t n);
+char	*ft_r_and_c(char *str,  size_t n, size_t end, char *buffer);
+struct  s_stat{
+    char    *old_line;
+    size_t  full_readed;
+    char    *line;
+};
+char	*get_current_line(struct s_stat *raf, char *buffer, size_t readed);
+char	*ft_parse_line(char *buffer, size_t i, size_t readed, struct s_stat *raf);
+
 
 #endif
