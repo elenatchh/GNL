@@ -1,105 +1,88 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: elefonta <elefonta@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/16 11:05:34 by elefonta          #+#    #+#             */
-/*   Updated: 2024/04/16 13:25:39 by elefonta         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
+# include <stdlib.h>
+# include <unistd.h>
+# include <sys/types.h>
+#include <stdio.h>
+#include <fcntl.h>
+
 
 char	*get_next_line(int fd)
 {
-	static char	stock[BUFFER_SIZE];
-	char		*line;
-	ssize_t		byte_count;
-	int			i;
-
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
-		return (NULL);
-	byte_count = BUFFER_SIZE;
-	while (!ft_strchr(stock, '\n') && byte_count == BUFFER_SIZE)
-	{
-		byte_count = ft_read_and_stock(stock, fd);
-		if (byte_count == -1)
-			return (NULL);
-	}
-	line = ft_extract_line(stock);
-	if (!line || !*line)
-		stock[0] = '\0';
-	return (line);
-}
-
-ssize_t	ft_read_and_stock(char *stock, int fd)
-{
-	char	buffer[BUFFER_SIZE + 1];
-	ssize_t	byte_count;
-	ssize_t	i;
-	ssize_t	start;
-
-	byte_count = read(fd, buffer, BUFFER_SIZE);
-	if (byte_count == -1)
-		return (-1);
-	buffer[byte_count] = '\0';
-	i = 0;
-	while (stock[i])
-		i++;
-	start = i;
-	i = 0;
-	while (buffer[i])
-	{
-		stock[start + i] = buffer{i};
-		i++;
-	}
-	return (byte_count);
-}
-
-char	*ft_extract_line(char *stock)
-{
+	char	buffer[BUFFER_SIZE];
+	size_t  readed;
+	size_t		i;
+	int		tmp;
 	char	*line;
-	int		i;
+	static char *old_line = NULL;
+	static size_t  full_readed = 0;
 
-	if (!stock)
-		return (NULL);
-	i = 0;
-	while (stock[i] && stock[i] != '\n')
-		i++;
-	line = (char *)malloc((i + 1) * sizeof(char));
-	if (!line)
-		return (NULL);
-	i = 0 ;
-	while (stock[i] && stock[i] != '\n')
+	line = old_line;
+	old_line = NULL;
+	while (1)
 	{
-		line[i] = stock[i];
-		i++;
+		readed = read(fd, &buffer, BUFFER_SIZE);
+		if (readed == 0) {
+			return line;
+		}
+		if (readed < 0) {
+			return NULL;
+		}
+		i = 0;
+		while (i < readed && buffer[i] != '\n')
+			i++;
+		if ( i == readed)
+		{
+			ft_realloc_and_copy();
+			line[full_readed + i] = buffer[i];
+			full_readed += readed;
+		}
+		else {
+			tmp = i + 1;
+			ft_realloc_and_copy();
+			i = tmp;
+			full_readed = readed - i;
+			old_line = malloc(sizeof(char) * (readed - i + 1));
+			old_line[readed - i] = 0;
+			while (i < readed)
+			{
+				old_line[i - tmp] = buffer[i];
+				i++;
+			}
+			return line;
+		}
 	}
-	line[i] = '\0';
-	if (stock[i] == '\n')
-		i++;
-	ft_shift_stock(stock, i);
-	return (line);
+		
 }
 
-void	ft_shift_stock(char *stock, int n)
+void	*ft_realloc_and_copy(int fd, size_t start)
 {
-	int	i;
-	int	j;
-
-	i = 0;
-	j = n;
-	while (stock[j])
+	
+	line = ft_realloc(line, sizeof(char) * (full_readed + i + 1));
+	line[full_readed + i--] = 0;
+	while (i > 0)
 	{
-		stock[i] = stock[j];
-		i++;
-		j++;
+		line[full_readed + i] = buffer[i];
+		i--;
 	}
-	while (i < BUFFER_SIZE)
-	{
-		stock[i] = '\0';
-		i++;
-	}
+	line[full_readed + i] = buffer[i];
 }
+
+// int main()
+// {
+//     int fd;
+//     char *line;
+
+//     fd = open("test.txt", O_RDONLY);
+//     if (fd == -1)
+//     {
+//         perror("Erreur lors de l'ouverture du fichier");
+//         return 1;
+//     }
+//     while ((line = get_next_line(fd)) != NULL)
+//     {
+//         printf("-- %s\n", line);
+//         free(line);
+//     }
+//     close(fd);
+// 	return 0;
+// }

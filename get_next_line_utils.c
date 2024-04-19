@@ -6,7 +6,7 @@
 /*   By: melondeau <melondeau@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 14:09:56 by elefonta          #+#    #+#             */
-/*   Updated: 2024/04/19 15:16:55 by melondeau        ###   ########.fr       */
+/*   Updated: 2024/04/19 15:47:09 by melondeau        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,15 @@ char	*ft_realloc(char *str, size_t n)
 	char *tmp;
 	int	i;
 	
-	tmp = malloc(sizeof(char *) * n);
-	i=0;
+	tmp = malloc(n);
+	if (str == NULL)
+		return tmp;
+	i = 0;
 	while (str[i])
 	{
 		tmp[i] = str[i];
 		i++; 
 	}
+	free(str);
 	return (tmp);
 }
