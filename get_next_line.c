@@ -8,29 +8,31 @@
 
 char	*get_next_line(int fd)
 {
-	char			buffer[BUFFER_SIZE];
-	size_t 			readed;
+	char					buffer[BUFFER_SIZE];
+	size_t 					readed;
 	static struct s_stat	raf;
-	char            *ret;
-	
+	char					*ret;
+
 
 	ret = get_current_line(&raf, NULL, 0);
 	while (ret == NULL)
 	{
 		readed = read(fd, &buffer, BUFFER_SIZE);
 		if (readed == 0)
-			return raf.line;
+			return (raf.line);
 		if (readed < 0)
-			return NULL;
+			return (NULL);
 		ret = get_current_line(&raf, buffer, readed);
 	}
-	return ret;
+	return (ret);
 }
+
 char	*get_current_line(struct s_stat *raf, char *buffer, size_t readed)
 {	
 	size_t	i;
 
-	if (buffer == NULL) {
+	if (buffer == NULL)
+	{
 		buffer = raf->old_line;
 		readed = raf->full_readed;
 		raf->old_line = NULL;
@@ -39,15 +41,13 @@ char	*get_current_line(struct s_stat *raf, char *buffer, size_t readed)
 	i = 0;
 	while (i < readed && buffer[i] != '\n')
 		i++;
-	if ( i == readed)
+	if (i == readed)
 	{
-		printf("je vois");
 		raf->line = ft_r_and_c(raf->line, sizeof(char) * raf->full_readed + i, i, buffer);
-		printf("je vois pas")
 		raf->full_readed += readed;
-		return NULL;
+		return (NULL);
 	}
-	return ft_parse_line( buffer, i, readed, raf);
+	return (ft_parse_line( buffer, i, readed, raf));
 
 }
 
@@ -67,37 +67,33 @@ char	*ft_parse_line(char *buffer, size_t i, size_t readed, struct s_stat *raf)
 	}
 	return (raf->line);
 }
+
 char	*ft_r_and_c(char *str,  size_t n, size_t end, char *buffer)
 {
-	char *tmp;
-	int	i;
-	
+	char	*tmp;
+	int		i;
+
 	tmp = malloc(n);
 	i = 0;
-	printf("tiiiiiito");
 	while (str && str[i])
 	{
 		tmp[i] = str[i];
-		i++; 
+		i++;
 	}
-	printf("tuuuuuow\n");
 	if (str)
 		free(str);
 	if (end == 0)
-		return str;
-	printf("tito\n");
+		return (NULL);
 
 	str = tmp;
 	str[i + end--] = 0;
-	printf("tito\n");
 
 	while (end > 0)
 	{
 		str[i + end] = buffer[end];
 		end--;
-	}	printf("titi");
+	}
 	str[i + end] = buffer[end];
-	printf("tota");
 	return (str);
 }
 
@@ -112,7 +108,7 @@ int main()
         perror("Erreur lors de l'ouverture du fichier");
         return 1;
     }
-    while ((line = get_next_line(fd)) != NULL)
+    while ((line = get_next_line(0)) != NULL)
     {
         printf("-- %s\n", line);
         free(line);
